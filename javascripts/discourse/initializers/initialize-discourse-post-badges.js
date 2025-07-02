@@ -10,8 +10,6 @@ const BADGE_CLASS = [
 
 const TRUST_LEVEL_BADGE = ["basic", "member", "regular", "leader"];
 
-const USER_BADGE_PAGE = "user's badge page";
-
 function buildBadge(badge) {
   let iconBody;
 
@@ -34,7 +32,6 @@ function buildBadge(badge) {
   span.classList.add("poster-icon");
   span.classList.add(badge.className);
   if (badge.id >= 1 && badge.id <= 4) {
-    // trust level badge
     span.classList.add(TRUST_LEVEL_BADGE[badge.id - 1]);
   }
   span.setAttribute("title", badge.title);
@@ -42,28 +39,21 @@ function buildBadge(badge) {
   return span;
 }
 
-function prepareBadges(allSerializedBadges, displayedBadges, username) {
-  let badgePage = "";
+function prepareRepresentativeBadges(allBadges, names = []) {
+  const lowerNames = names.filter(Boolean).map((n) => n.toLowerCase());
 
-  const isUserBadgePage = settings.badge_link_destination === USER_BADGE_PAGE;
-  if (isUserBadgePage) {
-    badgePage = `?username=${username}`;
-  }
-
-  return allSerializedBadges
-    .filter((badge) => displayedBadges.includes(badge.name.toLowerCase()))
-    .map((badge) => {
-      return {
-        icon: badge.icon.replace("fa-", ""),
-        image: badge.image_url ? badge.image_url : badge.image,
-        className: BADGE_CLASS[badge.badge_type_id - 1],
-        name: badge.slug,
-        id: badge.id,
-        badgeGroup: badge.badge_grouping_id,
-        title: badge.description,
-        url: `/badges/${badge.id}/${badge.slug}${badgePage}`,
-      };
-    });
+  return allBadges
+    .filter((badge) => lowerNames.includes(badge.name.toLowerCase()))
+    .map((badge) => ({
+      icon: badge.icon?.replace("fa-", ""),
+      image: badge.image_url || badge.image,
+      className: BADGE_CLASS[badge.badge_type_id - 1],
+      name: badge.slug,
+      id: badge.id,
+      badgeGroup: badge.badge_grouping_id,
+      title: badge.description,
+      url: `/badges/${badge.id}/${badge.slug}`,
+    }));
 }
 
 function appendBadges(badges, decorator) {
@@ -97,22 +87,17 @@ export default {
     withPluginApi("0.8.25", (api) => {
       const isMobileView = container.lookup("service:site").mobileView;
       const location = isMobileView ? "before" : "after";
-      const displayedBadges = settings.badges
-        .split("|")
-        .filter(Boolean)
-        .map((badge) => badge.toLowerCase());
 
       api.decorateWidget(`poster-name:${location}`, (decorator) => {
         const post = decorator.widget.findAncestorModel();
         if (post?.userBadges) {
-          const preparedBadges = prepareBadges(
-            post.userBadges,
-            displayedBadges,
-            post.username
-          );
+          const preparedBadges = prepareRepresentativeBadges(post.userBadges, [
+            post.representative_badge_1,
+            post.representative_badge_2,
+            post.representative_badge_3,
+          ]);
 
           appendBadges(preparedBadges, decorator);
-
           return decorator.h("div.poster-icon-container", {}, []);
         }
       });
