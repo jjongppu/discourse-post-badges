@@ -10,12 +10,3 @@
       end
     end
   end
-  
-  add_to_serializer(:user_card, :gamification_level_info) do
-    begin
-      DiscourseGamification::LevelHelper.progress_for(object.id)
-    rescue => e
-      Rails.logger.error("Gamification Level Error: #{e.message}")
-      nil
-    end
-  end
