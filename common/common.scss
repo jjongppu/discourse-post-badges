@@ -17,6 +17,14 @@
       align-items: center;
       margin: 0 8px 0 0;
 
+      &.custom-text-badge {
+        font-size: var(--font-down-1);
+      }
+
+      &.level-badge {
+        margin-right: 4px;
+      }
+
       &.badge-type-bronze .fa {
         color: $bronze;
       }
