@@ -56,8 +56,8 @@ function prepareRepresentativeBadges(allBadges, names = []) {
     }));
 }
 
-function appendBadges(badges, decorator) {
-  const selector = `[data-post-id="${decorator.attrs.id}"] .poster-icon-container`;
+function appendBadges(badges, helper) {
+  const selector = `[data-post-id="${helper.attrs.id}"] .poster-icon-container`;
 
   let trustLevel = "";
   let highestBadge = 0;
@@ -88,16 +88,17 @@ export default {
       const isMobileView = container.lookup("service:site").mobileView;
       const location = isMobileView ? "before" : "after";
 
-      api.decorateWidget(`poster-name:${location}`, (decorator) => {
-        const post = decorator.widget.findAncestorModel();
+      api.decorateWidget(`poster-name:${location}`, (helper) => {
+        const post = helper.getModel();
         if (post?.userBadges) {
           const preparedBadges = prepareRepresentativeBadges(post.userBadges, [
             post.representative_badge_1,
             post.representative_badge_2,
+            post.representative_badge_3,
           ]);
 
-          appendBadges(preparedBadges, decorator);
-          return decorator.h("div.poster-icon-container", {}, []);
+          appendBadges(preparedBadges, helper);
+          return helper.h("div.poster-icon-container", {}, []);
         }
       });
     });
