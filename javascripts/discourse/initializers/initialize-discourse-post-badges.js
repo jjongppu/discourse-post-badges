@@ -91,11 +91,10 @@ export default {
       api.decorateWidget(`poster-name:${location}`, (helper) => {
         const post = helper.getModel();
         if (post?.userBadges) {
-          const preparedBadges = prepareRepresentativeBadges(post.userBadges, [
-            post.representative_badge_1,
-            post.representative_badge_2,
-            post.representative_badge_3,
-          ]);
+          const preparedBadges = prepareRepresentativeBadges(
+            post.userBadges,
+            post.favorite_badges
+          );
 
           appendBadges(preparedBadges, helper);
           return helper.h("div.poster-icon-container", {}, []);
