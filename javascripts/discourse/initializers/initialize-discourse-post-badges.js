@@ -16,9 +16,14 @@ function buildBadge(badge) {
   if (badge.image) {
     const img = document.createElement("img");
     img.setAttribute("src", badge.image);
+    img.setAttribute("width", "30");
+    img.setAttribute("height", "30");
+    img.setAttribute("style", "object-fit: contain;");
     iconBody = img.outerHTML;
   } else if (badge.icon) {
     iconBody = iconHTML(badge.icon);
+  } else {
+    iconBody = ""; // fallback
   }
 
   if (badge.url) {
@@ -35,7 +40,7 @@ function buildBadge(badge) {
     span.classList.add(TRUST_LEVEL_BADGE[badge.id - 1]);
   }
   span.setAttribute("title", badge.title);
-  span.appendChild(iconBody);
+  span.appendChild(typeof iconBody === "string" ? new DOMParser().parseFromString(iconBody, "text/html").body.firstChild : iconBody);
   return span;
 }
 
@@ -46,7 +51,7 @@ function prepareRepresentativeBadges(allBadges, names = []) {
     .filter((badge) => lowerNames.includes(badge.name.toLowerCase()))
     .map((badge) => ({
       icon: badge.icon?.replace("fa-", ""),
-      image: badge.image_url || badge.image,
+      image: badge.image, // ← 백엔드에서 image_upload.url 들어오는 값
       className: BADGE_CLASS[badge.badge_type_id - 1],
       name: badge.slug,
       id: badge.id,
@@ -62,6 +67,7 @@ function appendBadges(badges, helper) {
   let trustLevel = "";
   let highestBadge = 0;
   const badgesNodes = [];
+
   badges.forEach((badge) => {
     badgesNodes.push(buildBadge(badge));
     if (badge.badgeGroup === 4 && badge.id > highestBadge) {
