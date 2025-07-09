@@ -44,8 +44,12 @@ function buildBadge(badge) {
   return span;
 }
 
-function prepareRepresentativeBadges(allBadges, names = []) {
-  const lowerNames = names.filter(Boolean).map((n) => n.toLowerCase());
+function prepareRepresentativeBadges(allBadges, favorites = []) {
+  const lowerNames = favorites
+    .filter(Boolean)
+    .map((item) => (typeof item === "string" ? item : item.name))
+    .filter(Boolean)
+    .map((n) => n.toLowerCase());
 
   return allBadges
     .filter((badge) => lowerNames.includes(badge.name.toLowerCase()))
