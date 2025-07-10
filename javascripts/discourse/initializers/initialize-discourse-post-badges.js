@@ -44,25 +44,18 @@ function buildBadge(badge) {
   return span;
 }
 
-function prepareRepresentativeBadges(allBadges, favorites = []) {
-  const lowerNames = favorites
-    .filter(Boolean)
-    .map((item) => (typeof item === "string" ? item : item.name))
-    .filter(Boolean)
-    .map((n) => n.toLowerCase());
-
-  return allBadges
-    .filter((badge) => lowerNames.includes(badge.name.toLowerCase()))
-    .map((badge) => ({
-      icon: badge.icon?.replace("fa-", ""),
-      image: badge.image, // ← 백엔드에서 image_upload.url 들어오는 값
-      className: BADGE_CLASS[badge.badge_type_id - 1],
-      name: badge.slug,
-      id: badge.id,
-      badgeGroup: badge.badge_grouping_id,
-      title: badge.description,
-      url: `/badges/${badge.id}/${badge.slug}`,
-    }));
+function prepareRepresentativeBadges(favorites = []) {
+  console.log("prepareRepresentativeBadges favorites", favorites);
+  return favorites.map((badge) => ({
+    icon: badge.icon?.replace("fa-", ""),
+    image: badge.image,
+    className: BADGE_CLASS[badge.badge_type_id - 1],
+    name: badge.slug,
+    id: badge.id,
+    badgeGroup: badge.badge_grouping_id,
+    title: badge.description,
+    url: `/badges/${badge.id}/${badge.slug}`,
+  }));
 }
 
 function appendBadges(badges, helper) {
@@ -100,12 +93,10 @@ export default {
 
       api.decorateWidget(`poster-name:${location}`, (helper) => {
         const post = helper.getModel();
-        if (post?.userBadges) {
-          const preparedBadges = prepareRepresentativeBadges(
-            post.userBadges,
-            post.favorite_badges
-          );
-
+        if (post?.favorite_badges?.length) {
+          console.log("favorite_badges from server", post.favorite_badges);
+          const preparedBadges = prepareRepresentativeBadges(post.favorite_badges);
+          console.log("prepared badges", preparedBadges);
           appendBadges(preparedBadges, helper);
           return helper.h("div.poster-icon-container", {}, []);
         }
