@@ -3,8 +3,6 @@
 # version: 0.1
 # authors: 쫑뿌
 
-register_asset "javascripts/discourse/initializers/post-badges.js"
-
 
 after_initialize do
   add_to_serializer(:post, :favorite_badges) do
