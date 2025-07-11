@@ -1,7 +1,7 @@
 # name: discourse-representative-badge
-# about: 게시글에 대표 배지1~3 표시용 커스텀 필드 전달
-# version: 0.1
-# authors: 쫑뿌
+# about: 사용자가 좋아요한 뱃지를 대표뱃지로 지정하여 post 옆에 표시
+# version: 0.2
+# authors: jonggil.kim
 
 
 after_initialize do
